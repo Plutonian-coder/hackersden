@@ -234,20 +234,14 @@ export default function ArtPage() {
               >
                 {/* Canvas Area */}
                 <div className="flex-1 relative mx-4 mb-4">
-                  <canvas
-                    ref={canvasRef}
-                    width={typeof window !== 'undefined' ? window.innerWidth : 1200}
-                    height={typeof window !== 'undefined' ? window.innerHeight * 0.6 : 600}
-                    className={`w-full h-full border-2 border-white/20 rounded-lg ${
-                      brushMode ? 'cursor-crosshair' : 'cursor-default'
-                    }`}
-                    onMouseDown={startDrawing}
-                    onMouseMove={draw}
-                    onMouseUp={stopDrawing}
-                    onMouseLeave={stopDrawing}
-                    onTouchStart={handleTouchStart}
-                    onTouchMove={handleTouchMove}
-                    onTouchEnd={stopDrawing}
+                  <CanvasWithSafeWindow
+                    canvasRef={canvasRef}
+                    brushMode={brushMode}
+                    startDrawing={startDrawing}
+                    draw={draw}
+                    stopDrawing={stopDrawing}
+                    handleTouchStart={handleTouchStart}
+                    handleTouchMove={handleTouchMove}
                   />
 
                   {/* Welcome Message */}
@@ -444,9 +438,16 @@ function ArtisticBackground() {
   );
 }
 
-// Floating Art Symbols
+// Floating Art Symbols (client-safe)
 function FloatingArtSymbols() {
   const symbols = ['🎨', '🖌️', '✨', '🎭', '🖼️', '🎨', '🖌️', '✨'];
+  const [dimensions, setDimensions] = useState({ width: 1200, height: 800 });
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      setDimensions({ width: window.innerWidth, height: window.innerHeight });
+    }
+  }, []);
 
   return (
     <div className="fixed inset-0 pointer-events-none">
@@ -455,13 +456,13 @@ function FloatingArtSymbols() {
           key={index}
           className="absolute text-2xl opacity-20"
           initial={{
-            x: Math.random() * window.innerWidth,
-            y: Math.random() * window.innerHeight,
+            x: Math.random() * dimensions.width,
+            y: Math.random() * dimensions.height,
             rotate: 0
           }}
           animate={{
-            x: [null, Math.random() * window.innerWidth],
-            y: [null, Math.random() * window.innerHeight],
+            x: [null, Math.random() * dimensions.width],
+            y: [null, Math.random() * dimensions.height],
             rotate: [0, 360]
           }}
           transition={{
@@ -474,6 +475,51 @@ function FloatingArtSymbols() {
         </motion.div>
       ))}
     </div>
+  );
+}
+
+// Canvas component with SSR-safe window usage
+function CanvasWithSafeWindow({
+  canvasRef,
+  brushMode,
+  startDrawing,
+  draw,
+  stopDrawing,
+  handleTouchStart,
+  handleTouchMove
+}: {
+  canvasRef: React.RefObject<HTMLCanvasElement>;
+  brushMode: boolean;
+  startDrawing: (e: React.MouseEvent<HTMLCanvasElement>) => void;
+  draw: (e: React.MouseEvent<HTMLCanvasElement>) => void;
+  stopDrawing: () => void;
+  handleTouchStart: (e: React.TouchEvent<HTMLCanvasElement>) => void;
+  handleTouchMove: (e: React.TouchEvent<HTMLCanvasElement>) => void;
+}) {
+  const [dimensions, setDimensions] = useState({ width: 1200, height: 600 });
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      setDimensions({ width: window.innerWidth, height: window.innerHeight * 0.6 });
+    }
+  }, []);
+
+  return (
+    <canvas
+      ref={canvasRef}
+      width={dimensions.width}
+      height={dimensions.height}
+      className={`w-full h-full border-2 border-white/20 rounded-lg ${
+        brushMode ? 'cursor-crosshair' : 'cursor-default'
+      }`}
+      onMouseDown={startDrawing}
+      onMouseMove={draw}
+      onMouseUp={stopDrawing}
+      onMouseLeave={stopDrawing}
+      onTouchStart={handleTouchStart}
+      onTouchMove={handleTouchMove}
+      onTouchEnd={stopDrawing}
+    />
   );
 }
 
