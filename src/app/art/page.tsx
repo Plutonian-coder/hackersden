@@ -236,8 +236,8 @@ export default function ArtPage() {
                 <div className="flex-1 relative mx-4 mb-4">
                   <canvas
                     ref={canvasRef}
-                    width={window.innerWidth}
-                    height={window.innerHeight * 0.6}
+                    width={typeof window !== 'undefined' ? window.innerWidth : 1200}
+                    height={typeof window !== 'undefined' ? window.innerHeight * 0.6 : 600}
                     className={`w-full h-full border-2 border-white/20 rounded-lg ${
                       brushMode ? 'cursor-crosshair' : 'cursor-default'
                     }`}

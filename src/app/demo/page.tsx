@@ -123,7 +123,7 @@ export default function DemoPage() {
             <div className="text-left space-y-2 text-cyan-200">
               <p>• <strong>Click the hamburger button</strong> (top-right) to open the menu</p>
               <p>• <strong>Click menu items</strong> or use <strong>arrow keys</strong> to navigate</p>
-              <p>• <strong>Type commands</strong> like "cd science", "cd art", etc.</p>
+              <p>• <strong>Type commands</strong> like &ldquo;cd science&rdquo;, &ldquo;cd art&rdquo;, etc.</p>
               <p>• <strong>Press ESC</strong> or click outside to close</p>
               <p>• <strong>Mobile-friendly</strong> with touch gestures</p>
             </div>

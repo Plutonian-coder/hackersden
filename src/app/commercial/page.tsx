@@ -684,9 +684,10 @@ export default function CommercialPage() {
                       </div>
                     </div>
 
-                    <form onSubmit={async (e) => {
+                    <form onSubmit={async (e: React.FormEvent<HTMLFormElement>) => {
                       e.preventDefault();
-                      const idea = (e.currentTarget as any).idea.value;
+                      const formData = new FormData(e.currentTarget);
+                      const idea = formData.get('idea') as string;
                       if (!idea.trim()) return;
 
                       setIsTyping(true);
