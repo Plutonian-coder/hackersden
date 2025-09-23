@@ -370,18 +370,24 @@ function MatrixRain() {
 
 // Scanlines Overlay Component
 function Scanlines() {
+  // Pre-calculate animation values to avoid hydration mismatch
+  const scanlineAnimations = Array.from({ length: 50 }).map((_, i) => ({
+    duration: 2 + (i * 0.1) % 4, // Deterministic based on index
+    delay: (i * 0.04) % 2
+  }));
+
   return (
     <div className="fixed inset-0 pointer-events-none z-5">
       <div className="absolute inset-0 bg-gradient-to-b from-transparent via-green-500/5 to-transparent animate-pulse"></div>
       <div className="absolute inset-0 opacity-10">
-        {Array.from({ length: 50 }).map((_, i) => (
+        {scanlineAnimations.map((anim, i) => (
           <div
             key={i}
             className="absolute w-full h-px bg-green-500/20"
             style={{
               top: `${i * 2}%`,
-              animation: `scanline ${2 + Math.random() * 4}s linear infinite`,
-              animationDelay: `${Math.random() * 2}s`
+              animation: `scanline ${anim.duration}s linear infinite`,
+              animationDelay: `${anim.delay}s`
             }}
           />
         ))}
